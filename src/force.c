@@ -6,16 +6,16 @@
 static void malloc_failed_(size_t size);
 
 const struct mallocator_vtable MALLOCATOR_VTABLE_FORCE = {
-    .alloc   = mforce_alloc,
-    .realloc = mforce_realloc,
-    .free    = mforce_free
+    .alloc   = mallocator_force_alloc,
+    .realloc = mallocator_force_realloc,
+    .free    = mallocator_force_free
 };
 
 const mallocator_t MALLOCATOR_FORCE = {
     .vtable = &MALLOCATOR_VTABLE_FORCE
 };
 
-void *mforce_alloc(size_t size) {
+void *mallocator_force_alloc(mallocator_t *allocator, size_t size) {
     void *block = malloc(size);
 
     if (!block)
@@ -24,7 +24,7 @@ void *mforce_alloc(size_t size) {
     return block;
 }
 
-void *mforce_realloc(void *block, size_t new_size) {
+void *mallocator_force_realloc(mallocator_t *allocator, void *block, size_t new_size) {
     void *new_block = realloc(block, new_size);
 
     if (!new_block)
@@ -43,6 +43,6 @@ void malloc_failed_(size_t size) {
     exit(EXIT_FAILURE);
 }
 
-void mforce_free(void *block) {
+void mallocator_force_free(mallocator_t *allocator, void *block) {
     free(block);
 }

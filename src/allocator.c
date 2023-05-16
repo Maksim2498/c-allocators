@@ -13,19 +13,19 @@ const struct mallocator_vtable *mallocator_vtable(const mallocator_t *allocator)
     return allocator->vtable;
 }
 
-void *mallocator_alloc(const mallocator_t *allocator, size_t size) {
+void *mallocator_alloc(mallocator_t *allocator, size_t size) {
     assert(mallocator_valid(allocator));
-    return allocator->vtable->alloc(size);
+    return allocator->vtable->alloc(allocator, size);
 }
 
-void *mallocator_realloc(const mallocator_t *allocator, void *block, size_t new_size) {
+void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size) {
     assert(mallocator_valid(allocator));
-    return allocator->vtable->realloc(block, new_size);
+    return allocator->vtable->realloc(allocator, block, new_size);
 }
 
-void mallocator_free(const mallocator_t *allocator, void *block) {
+void mallocator_free(mallocator_t *allocator, void *block) {
     assert(mallocator_valid(allocator));
-    allocator->vtable->free(block);
+    allocator->vtable->free(allocator, block);
 }
 
 bool mallocator_valid(const mallocator_t *allocator) {
