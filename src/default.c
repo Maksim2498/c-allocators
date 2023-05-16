@@ -2,8 +2,12 @@
 
 #include <stdlib.h>
 
-const struct mallocator MALLOCATOR_DEFAULT = {
+const struct mallocator_vtable MALLOCATOR_VTABLE_DEFAULT = {
     .alloc   = malloc,
     .realloc = realloc,
     .free    = free
+};
+
+const mallocator_t MALLOCATOR_DEFAULT = {
+    .vtable = &MALLOCATOR_VTABLE_DEFAULT
 };

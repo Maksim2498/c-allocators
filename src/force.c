@@ -5,10 +5,14 @@
 
 static void malloc_failed_(size_t size);
 
-const struct mallocator MALLOCATOR_FORCE = {
+const struct mallocator_vtable MALLOCATOR_VTABLE_FORCE = {
     .alloc   = mforce_alloc,
     .realloc = mforce_realloc,
     .free    = mforce_free
+};
+
+const mallocator_t MALLOCATOR_FORCE = {
+    .vtable = &MALLOCATOR_VTABLE_FORCE
 };
 
 void *mforce_alloc(size_t size) {

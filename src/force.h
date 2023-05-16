@@ -5,7 +5,8 @@
 
 #include "allocator.h"
 
-extern const struct mallocator MALLOCATOR_FORCE;
+extern const struct mallocator_vtable MALLOCATOR_VTABLE_FORCE;
+extern const mallocator_t             MALLOCATOR_FORCE;
 
 void *mforce_alloc(size_t size);
 void *mforce_realloc(void *block, size_t new_size);

@@ -3,6 +3,7 @@
 
 #include "allocator.h"
 
-extern const struct mallocator MALLOCATOR_DEFAULT;
+extern const struct mallocator_vtable MALLOCATOR_VTABLE_DEFAULT;
+extern const mallocator_t             MALLOCATOR_DEFAULT;
 
 #endif
