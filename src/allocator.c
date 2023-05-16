@@ -19,12 +19,12 @@ void *mallocator_alloc(mallocator_t *allocator, size_t size) {
 }
 
 void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size) {
-    assert(mallocator_valid(allocator));
+    assert(mallocator_valid(allocator) && allocator->vtable->realloc);
     return allocator->vtable->realloc(allocator, block, new_size);
 }
 
 void mallocator_free(mallocator_t *allocator, void *block) {
-    assert(mallocator_valid(allocator));
+    assert(mallocator_valid(allocator) && allocator->vtable->free);
     allocator->vtable->free(allocator, block);
 }
 
@@ -35,7 +35,5 @@ bool mallocator_valid(const mallocator_t *allocator) {
 
 bool mallocator_vtable_valid(const struct mallocator_vtable *vtable) {
     return vtable
-        && vtable->alloc
-        && vtable->realloc
-        && vtable->free;
+        && vtable->alloc;
 }

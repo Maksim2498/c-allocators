@@ -10,13 +10,13 @@ typedef struct {
     const struct mallocator_vtable *vtable;
 } mallocator_t;
 
-typedef void *(*malloctor_alloc_t)(mallocator_t *, size_t);
-typedef void *(*malloctor_realloc_t)(mallocator_t *, void *, size_t);
+typedef void *(*mallocator_alloc_t)(mallocator_t *, size_t);
+typedef void *(*mallocator_realloc_t)(mallocator_t *, void *, size_t);
 typedef void (*mallocator_free_t)(mallocator_t *, void *);
 
 struct mallocator_vtable {
-    malloctor_alloc_t   alloc;
-    malloctor_realloc_t realloc;
+    mallocator_alloc_t   alloc;
+    mallocator_realloc_t realloc;
     mallocator_free_t   free;
 };
 
