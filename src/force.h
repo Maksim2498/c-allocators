@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include "types.h"
+#include "allocator.h"
 
 extern const struct mallocator MALLOCATOR_FORCE;
 
