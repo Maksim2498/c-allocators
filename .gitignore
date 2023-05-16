@@ -1,0 +1,8 @@
+/.vscode
+
+/build
+/docs
+/CMakeFiles
+/CMakeCache.txt
+
+.DS_Store
