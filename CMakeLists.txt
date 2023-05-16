@@ -9,6 +9,7 @@ project(allocators
 add_library(fominmv-alloc
             src/all.h
             src/allocator.h src/allocator.c
+            src/arena.h     src/arena.c
             src/default.h   src/default.c
             src/force.h     src/force.c)
 
@@ -17,7 +18,7 @@ set_target_properties(fominmv-alloc PROPERTIES
             C_STANDARD          99
             C_STANDARD_REQUIRED YES
             C_EXTENSIONS        NO
-            PUBLIC_HEADER       "src/all.h;src/allocator.h;src/default.h;src/force.h")
+            PUBLIC_HEADER       "src/all.h;src/allocator.h;src/arena.h;src/default.h;src/force.h")
 
             include(GNUInstallDirs)
 
