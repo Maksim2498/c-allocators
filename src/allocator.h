@@ -17,7 +17,7 @@ typedef void (*mallocator_free_t)(mallocator_t *, void *);
 struct mallocator_vtable {
     mallocator_alloc_t   alloc;
     mallocator_realloc_t realloc;
-    mallocator_free_t   free;
+    mallocator_free_t    free;
 };
 
 mallocator_t mallocator_mk(const struct mallocator_vtable *vtable);
