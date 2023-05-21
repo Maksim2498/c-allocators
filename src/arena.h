@@ -16,7 +16,8 @@ typedef struct {
 extern const struct mallocator_vtable MALLOCATOR_ARENA_VTABLE;
 
 mallocator_arena_t mallocator_arena_mk(void *block, size_t size);
-mallocator_arena_t mallocator_arena_mk_alloc(size_t size, bool *failed);
+mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t size, bool *failed);
+mallocator_arena_t mallocator_arena_mk_malloc(size_t size, bool *failed);
 void mallocator_arena_free(mallocator_arena_t *allocator);
 void *mallocator_arena_block(const mallocator_arena_t *allocator);
 size_t mallocator_arena_total(const mallocator_arena_t *allocator);

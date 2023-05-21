@@ -20,7 +20,23 @@ mallocator_arena_t mallocator_arena_mk(void *block, size_t size) {
     };
 }
 
-mallocator_arena_t mallocator_arena_mk_alloc(size_t size, bool *failed) {
+mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t size, bool *failed) {
+    assert(mallocator_valid(alloca));
+
+    void *block = mallocator_alloc(allocator, size);
+
+    if (!block && failed)
+        *failed = true;
+
+    return (mallocator_arena_t) {
+        .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
+        .block     = block,
+        .total     = size,
+        .used      = 0
+    };
+}
+
+mallocator_arena_t mallocator_arena_mk_malloc(size_t size, bool *failed) {
     void *block = malloc(size);
 
     if (!block && failed)
