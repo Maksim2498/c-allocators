@@ -18,9 +18,19 @@ void *mallocator_alloc(mallocator_t *allocator, size_t size) {
     return allocator->vtable->alloc(allocator, size);
 }
 
+bool mallocator_can_realloc(mallocator_t *allocator) {
+    assert(mallocator_valid(allocator));
+    return allocator->vtable->realloc;
+}
+
 void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size) {
     assert(mallocator_valid(allocator) && allocator->vtable->realloc);
     return allocator->vtable->realloc(allocator, block, new_size);
+}
+
+bool mallocator_can_free(mallocator_t *allocator) {
+    assert(mallocator_valid(allocator));
+    return allocator->vtable->free;
 }
 
 void mallocator_free(mallocator_t *allocator, void *block) {
