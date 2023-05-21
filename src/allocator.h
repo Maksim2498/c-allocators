@@ -28,7 +28,7 @@ bool mallocator_can_realloc(const mallocator_t *allocator);
 void *mallocator_safe_realloc(mallocator_t *allocator, void *block, size_t new_size);
 void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size);
 bool mallocator_can_free(const mallocator_t *allocator);
-void mallocator_safe_free(mallocator_t *allocator, void *block);
+bool mallocator_safe_free(mallocator_t *allocator, void *block);
 void mallocator_free(mallocator_t *allocator, void *block);
 bool mallocator_valid(const mallocator_t *allocator);
 bool mallocator_vtable_valid(const struct mallocator_vtable *vtable);

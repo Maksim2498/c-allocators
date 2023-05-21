@@ -47,9 +47,13 @@ bool mallocator_can_free(const mallocator_t *allocator) {
     return allocator->vtable->free;
 }
 
-void mallocator_safe_free(mallocator_t *allocator, void *block) {
-    if (mallocator_can_free(allocator))
+bool mallocator_safe_free(mallocator_t *allocator, void *block) {
+    if (mallocator_can_free(allocator)) {
         mallocator_free(allocator, block);
+        return true;
+    }
+
+    return false;
 }
 
 void mallocator_free(mallocator_t *allocator, void *block) {
