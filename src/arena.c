@@ -14,6 +14,7 @@ mallocator_arena_t mallocator_arena_mk(void *block, size_t size) {
 
     return (mallocator_arena_t) {
         .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
+        .parent    = NULL,
         .block     = block,
         .total     = size,
         .used      = 0
@@ -30,20 +31,7 @@ mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t siz
 
     return (mallocator_arena_t) {
         .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
-        .block     = block,
-        .total     = size,
-        .used      = 0
-    };
-}
-
-mallocator_arena_t mallocator_arena_mk_malloc(size_t size, bool *failed) {
-    void *block = malloc(size);
-
-    if (!block && failed)
-        *failed = true;
-
-    return (mallocator_arena_t) {
-        .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
+        .parent    = allocator,
         .block     = block,
         .total     = size,
         .used      = 0
@@ -52,7 +40,16 @@ mallocator_arena_t mallocator_arena_mk_malloc(size_t size, bool *failed) {
 
 void mallocator_arena_free(mallocator_arena_t *allocator) {
     assert(mallocator_arena_valid(allocator));
-    free(allocator->block);
+
+    mallocator_t *parent = mallocator_arena_parent(allocator);
+
+    if (parent)
+        mallocator_safe_free(parent, allocator->block);
+}
+
+mallocator_t *mallocator_arena_parent(const mallocator_arena_t *allocator) {
+    assert(mallocator_valid(allocator));
+    return allocator->parent;
 }
 
 void *mallocator_arena_block(const mallocator_arena_t *allocator) {
@@ -85,6 +82,7 @@ void *mallocator_arena_alloc(mallocator_arena_t *allocator, size_t size) {
 
 bool mallocator_arena_valid(const mallocator_arena_t *allocator) {
     return mallocator_valid((const mallocator_t *) allocator)
+        && (!allocator->parent || mallocator_valid(allocator->parent))
         && allocator->block
         && allocator->used <= allocator->total;
 }
