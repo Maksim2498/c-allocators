@@ -24,6 +24,7 @@ void *mallocator_arena_block(const mallocator_arena_t *allocator);
 size_t mallocator_arena_total(const mallocator_arena_t *allocator);
 size_t mallocator_arena_used(const mallocator_arena_t *allocator);
 void *mallocator_arena_alloc(mallocator_arena_t *allocator, size_t size);
+void mallocator_aren_free_all(mallocator_arena_t *allocator);
 bool mallocator_arena_valid(const mallocator_arena_t *allocator);
 
 #endif

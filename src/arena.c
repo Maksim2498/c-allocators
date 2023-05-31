@@ -22,7 +22,7 @@ mallocator_arena_t mallocator_arena_mk(void *block, size_t size) {
 }
 
 mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t size, bool *failed) {
-    assert(mallocator_valid(alloca));
+    assert(mallocator_valid(allocator));
 
     void *block = mallocator_alloc(allocator, size);
 
@@ -48,7 +48,7 @@ void mallocator_arena_free(mallocator_arena_t *allocator) {
 }
 
 mallocator_t *mallocator_arena_parent(const mallocator_arena_t *allocator) {
-    assert(mallocator_valid(allocator));
+    assert(mallocator_arena_valid(allocator));
     return allocator->parent;
 }
 
@@ -78,6 +78,11 @@ void *mallocator_arena_alloc(mallocator_arena_t *allocator, size_t size) {
     allocator->used += size;
 
     return block;
+}
+
+void mallocator_aren_free_all(mallocator_arena_t *allocator) {
+    assert(mallocator_arena_valid(allocator));
+    allocator->used = 0;
 }
 
 bool mallocator_arena_valid(const mallocator_arena_t *allocator) {
