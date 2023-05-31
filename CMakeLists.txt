@@ -22,6 +22,6 @@ set_target_properties(fominmv-allocator PROPERTIES
 
             include(GNUInstallDirs)
 
-install(TARGETS fominmv-allocator
+install(TARGETS       fominmv-allocator
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/fominmv/allocator)
