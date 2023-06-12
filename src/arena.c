@@ -3,17 +3,17 @@
 #include <assert.h>
 #include <stdlib.h>
 
-const struct mallocator_vtable MALLOCATOR_ARENA_VTABLE = {
-    .alloc   = (mallocator_alloc_t) mallocator_arena_alloc,
+const struct AllocatorVTable ArenaAllocator_VTABLE = {
+    .alloc   = (AllocatorAlloc) ArenaAllocator_alloc,
     .realloc = NULL,
     .free    = NULL
 };
 
-mallocator_arena_t mallocator_arena_mk(void *block, size_t size) {
+ArenaAllocator ArenaAllocator_mk(void *block, size_t size) {
     assert(block);
 
-    return (mallocator_arena_t) {
-        .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
+    return (ArenaAllocator) {
+        .allocator = Allocator_mk(&ArenaAllocator_VTABLE),
         .parent    = NULL,
         .block     = block,
         .total     = size,
@@ -21,16 +21,14 @@ mallocator_arena_t mallocator_arena_mk(void *block, size_t size) {
     };
 }
 
-mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t size, bool *failed) {
-    assert(mallocator_valid(allocator));
-
-    void *block = mallocator_alloc(allocator, size);
+ArenaAllocator ArenaAllocator_mkChild(Allocator *allocator, size_t size, bool *failed) {
+    void *block = Allocator_alloc(allocator, size);
 
     if (!block && failed)
         *failed = true;
 
-    return (mallocator_arena_t) {
-        .allocator = mallocator_mk(&MALLOCATOR_ARENA_VTABLE),
+    return (ArenaAllocator) {
+        .allocator = Allocator_mk(&ArenaAllocator_VTABLE),
         .parent    = allocator,
         .block     = block,
         .total     = size,
@@ -38,56 +36,56 @@ mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t siz
     };
 }
 
-void mallocator_arena_free(mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
-
-    mallocator_t *parent = mallocator_arena_parent(allocator);
+void ArenaAllocator_freeBlock(ArenaAllocator *allocator) {
+    Allocator *parent = AreanAllocator_getParent(allocator);
 
     if (parent)
-        mallocator_safe_free(parent, allocator->block);
+        Allocator_freeIfCan(parent, allocator->block);
 }
 
-mallocator_t *mallocator_arena_parent(const mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
+Allocator *AreanAllocator_getParent(const ArenaAllocator *allocator) {
+    assert(AreanAllocator_isValid(allocator));
     return allocator->parent;
 }
 
-void *mallocator_arena_block(const mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
+void *ArenaAllocator_getBlock(const ArenaAllocator *allocator) {
+    assert(AreanAllocator_isValid(allocator));
     return allocator->block;
 }
 
-size_t mallocator_arena_total(const mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
+size_t ArenaAllocator_getTotal(const ArenaAllocator *allocator) {
+    assert(AreanAllocator_isValid(allocator));
     return allocator->total;
 }
 
-size_t mallocator_arena_used(const mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
+size_t ArenaAllocator_getUsed(const ArenaAllocator *allocator) {
+    assert(AreanAllocator_isValid(allocator));
     return allocator->used;
 }
 
-void *mallocator_arena_alloc(mallocator_arena_t *allocator, size_t size) {
-    assert(mallocator_arena_valid(allocator));
+void *ArenaAllocator_alloc(ArenaAllocator *allocator, size_t size) {
+    assert(AreanAllocator_isValid(allocator));
 
-    if (allocator->used + size > allocator->total)
+    size_t newUsed = allocator->used + size;
+
+    if (newUsed > allocator->total)
         return NULL;
 
     void *block = allocator->block + allocator->used;
 
-    allocator->used += size;
+    allocator->used = newUsed;
 
     return block;
 }
 
-void mallocator_aren_free_all(mallocator_arena_t *allocator) {
-    assert(mallocator_arena_valid(allocator));
+void ArenaAllocator_freeAll(ArenaAllocator *allocator) {
+    assert(AreanAllocator_isValid(allocator));
     allocator->used = 0;
 }
 
-bool mallocator_arena_valid(const mallocator_arena_t *allocator) {
-    return mallocator_valid((const mallocator_t *) allocator)
-        && (!allocator->parent || mallocator_valid(allocator->parent))
+bool AreanAllocator_isValid(const ArenaAllocator *allocator) {
+    return Allocator_isValid((const Allocator *) allocator)
+        && (!allocator->parent || Allocator_isValid(allocator->parent))
         && allocator->block
         && allocator->used <= allocator->total;
 }

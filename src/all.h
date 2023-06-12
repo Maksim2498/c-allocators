@@ -3,7 +3,6 @@
 
 #include "allocator.h"
 #include "arena.h"
-#include "default.h"
-#include "force.h"
+#include "std.h"
 
 #endif

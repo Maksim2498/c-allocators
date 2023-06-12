@@ -7,24 +7,33 @@
 #include "allocator.h"
 
 typedef struct {
-    mallocator_t  allocator;
-    mallocator_t *parent;
-    void         *block;
-    size_t        total;
-    size_t        used;
-} mallocator_arena_t;
+    Allocator  allocator;
+    Allocator *parent;
+    void      *block;
+    size_t     total;
+    size_t     used;
+} ArenaAllocator;
 
-extern const struct mallocator_vtable MALLOCATOR_ARENA_VTABLE;
+extern const struct AllocatorVTable ArenaAllocator_VTABLE;
 
-mallocator_arena_t mallocator_arena_mk(void *block, size_t size);
-mallocator_arena_t mallocator_arena_mk_alloc(mallocator_t *allocator, size_t size, bool *failed);
-void mallocator_arena_free(mallocator_arena_t *allocator);
-mallocator_t *mallocator_arena_parent(const mallocator_arena_t *allocator);
-void *mallocator_arena_block(const mallocator_arena_t *allocator);
-size_t mallocator_arena_total(const mallocator_arena_t *allocator);
-size_t mallocator_arena_used(const mallocator_arena_t *allocator);
-void *mallocator_arena_alloc(mallocator_arena_t *allocator, size_t size);
-void mallocator_aren_free_all(mallocator_arena_t *allocator);
-bool mallocator_arena_valid(const mallocator_arena_t *allocator);
+ArenaAllocator ArenaAllocator_mk(void *block, size_t size);
+
+ArenaAllocator ArenaAllocator_mkChild(Allocator *allocator, size_t size, bool *failed);
+
+void ArenaAllocator_freeBlock(ArenaAllocator *allocator);
+
+Allocator *AreanAllocator_getParent(const ArenaAllocator *allocator);
+
+void *ArenaAllocator_getBlock(const ArenaAllocator *allocator);
+
+size_t ArenaAllocator_getTotal(const ArenaAllocator *allocator);
+
+size_t ArenaAllocator_getUsed(const ArenaAllocator *allocator);
+
+void *ArenaAllocator_alloc(ArenaAllocator *allocator, size_t size);
+
+void ArenaAllocator_freeAll(ArenaAllocator *allocator);
+
+bool AreanAllocator_isValid(const ArenaAllocator *allocator);
 
 #endif

@@ -4,33 +4,44 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-struct mallocator_vtable;
+struct AllocatorVTable;
 
 typedef struct {
-    const struct mallocator_vtable *vtable;
-} mallocator_t;
+    const struct AllocatorVTable *vtable;
+} Allocator;
 
-typedef void *(*mallocator_alloc_t)(mallocator_t *, size_t);
-typedef void *(*mallocator_realloc_t)(mallocator_t *, void *, size_t);
-typedef void (*mallocator_free_t)(mallocator_t *, void *);
+typedef void *(*AllocatorAlloc)(Allocator *, size_t);
+typedef void *(*AllocatorRealloc)(Allocator *, void *, size_t);
+typedef void (*AllocatorFree)(Allocator *, void *);
 
-struct mallocator_vtable {
-    mallocator_alloc_t   alloc;
-    mallocator_realloc_t realloc;
-    mallocator_free_t    free;
+struct AllocatorVTable {
+    AllocatorAlloc   alloc;
+    AllocatorRealloc realloc;
+    AllocatorFree    free;
 };
 
-mallocator_t mallocator_mk(const struct mallocator_vtable *vtable);
-const struct mallocator_vtable *mallocator_vtable(const mallocator_t *allocator);
-bool mallocator_full(const mallocator_t *allocator);
-void *mallocator_alloc(mallocator_t *allocator, size_t size);
-bool mallocator_can_realloc(const mallocator_t *allocator);
-void *mallocator_safe_realloc(mallocator_t *allocator, void *block, size_t new_size);
-void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size);
-bool mallocator_can_free(const mallocator_t *allocator);
-bool mallocator_safe_free(mallocator_t *allocator, void *block);
-void mallocator_free(mallocator_t *allocator, void *block);
-bool mallocator_valid(const mallocator_t *allocator);
-bool mallocator_vtable_valid(const struct mallocator_vtable *vtable);
+Allocator Allocator_mk(const struct AllocatorVTable *vtable);
+
+const struct AllocatorVTable *Allocator_getVTable(const Allocator *allocator);
+
+bool Allocator_canAll(const Allocator *allocator);
+
+void *Allocator_alloc(Allocator *allocator, size_t size);
+
+bool Allocator_canRealloc(const Allocator *allocator);
+
+void *Allocator_reallocIfCan(Allocator *allocator, void *block, size_t newSize);
+
+void *Allocator_realloc(Allocator *allocator, void *block, size_t newSize);
+
+bool Allocator_canFree(const Allocator *allocator);
+
+bool Allocator_freeIfCan(Allocator *allocator, void *block);
+
+void Allocator_free(Allocator *allocator, void *block);
+
+bool Allocator_isValid(const Allocator *allocator);
+
+bool AllocatorVTable_isValid(const struct AllocatorVTable *vtable);
 
 #endif

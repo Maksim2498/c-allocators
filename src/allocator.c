@@ -3,70 +3,70 @@
 #include <assert.h>
 #include <string.h>
 
-mallocator_t mallocator_mk(const struct mallocator_vtable *vtable) {
-    assert(mallocator_vtable_valid(vtable));
-    return (mallocator_t) { vtable };
+Allocator Allocator_mk(const struct AllocatorVTable *vtable) {
+    assert(AllocatorVTable_isValid(vtable));
+    return (Allocator) { vtable };
 }
 
-const struct mallocator_vtable *mallocator_vtable(const mallocator_t *allocator) {
-    assert(mallocator_valid(allocator));
+const struct AllocatorVTable *Allocator_getVTable(const Allocator *allocator) {
+    assert(Allocator_isValid(allocator));
     return allocator->vtable;
 }
 
-bool mallocator_full(const mallocator_t *allocator) {
-    assert(mallocator_valid(allocator));
+bool Allocator_canAll(const Allocator *allocator) {
+    assert(Allocator_isValid(allocator));
 
-    const struct mallocator_vtable *vtable = allocator->vtable;
+    const struct AllocatorVTable *vtable = allocator->vtable;
 
     return vtable->realloc
         && vtable->free;
 }
 
-void *mallocator_alloc(mallocator_t *allocator, size_t size) {
-    assert(mallocator_valid(allocator));
+void *Allocator_alloc(Allocator *allocator, size_t size) {
+    assert(Allocator_isValid(allocator));
     return allocator->vtable->alloc(allocator, size);
 }
 
-bool mallocator_can_realloc(const mallocator_t *allocator) {
-    assert(mallocator_valid(allocator));
+bool Allocator_canRealloc(const Allocator *allocator) {
+    assert(Allocator_isValid(allocator));
     return allocator->vtable->realloc;
 }
 
-void *mallocator_safe_realloc(mallocator_t *allocator, void *block, size_t new_size) {
-    return mallocator_can_realloc(allocator) ? mallocator_realloc(allocator, block, new_size)
-                                             : NULL;
+void *Allocator_reallocIfCan(Allocator *allocator, void *block, size_t newSize) {
+    return Allocator_canRealloc(allocator) ? Allocator_realloc(allocator, block, newSize)
+                                           : NULL;
 }
 
-void *mallocator_realloc(mallocator_t *allocator, void *block, size_t new_size) {
-    assert(mallocator_valid(allocator) && allocator->vtable->realloc);
-    return allocator->vtable->realloc(allocator, block, new_size);
+void *Allocator_realloc(Allocator *allocator, void *block, size_t newSize) {
+    assert(Allocator_isValid(allocator) && allocator->vtable->realloc);
+    return allocator->vtable->realloc(allocator, block, newSize);
 }
 
-bool mallocator_can_free(const mallocator_t *allocator) {
-    assert(mallocator_valid(allocator));
+bool Allocator_canFree(const Allocator *allocator) {
+    assert(Allocator_isValid(allocator));
     return allocator->vtable->free;
 }
 
-bool mallocator_safe_free(mallocator_t *allocator, void *block) {
-    if (mallocator_can_free(allocator)) {
-        mallocator_free(allocator, block);
+bool Allocator_freeIfCan(Allocator *allocator, void *block) {
+    if (Allocator_canFree(allocator)) {
+        Allocator_free(allocator, block);
         return true;
     }
 
     return false;
 }
 
-void mallocator_free(mallocator_t *allocator, void *block) {
-    assert(mallocator_valid(allocator) && allocator->vtable->free);
+void Allocator_free(Allocator *allocator, void *block) {
+    assert(Allocator_isValid(allocator) && allocator->vtable->free);
     allocator->vtable->free(allocator, block);
 }
 
-bool mallocator_valid(const mallocator_t *allocator) {
+bool Allocator_isValid(const Allocator *allocator) {
     return allocator
-        && mallocator_vtable_valid(allocator->vtable);
+        && AllocatorVTable_isValid(allocator->vtable);
 }
 
-bool mallocator_vtable_valid(const struct mallocator_vtable *vtable) {
+bool AllocatorVTable_isValid(const struct AllocatorVTable *vtable) {
     return vtable
         && vtable->alloc;
 }
