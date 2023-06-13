@@ -9,7 +9,7 @@ const struct AllocatorVTable ArenaAllocator_VTABLE = {
     .free    = NULL
 };
 
-ArenaAllocator ArenaAllocator_mk(void *block, size_t size) {
+ArenaAllocator ArenaAllocator_FromBlock(void *block, size_t size) {
     assert(block);
 
     return (ArenaAllocator) {
@@ -21,7 +21,7 @@ ArenaAllocator ArenaAllocator_mk(void *block, size_t size) {
     };
 }
 
-ArenaAllocator ArenaAllocator_mkChild(Allocator *allocator, size_t size, bool *failed) {
+ArenaAllocator ArenaAllocator_Alloc(Allocator *allocator, size_t size, bool *failed) {
     void *block = Allocator_alloc(allocator, size);
 
     if (!block && failed)

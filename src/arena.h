@@ -16,9 +16,9 @@ typedef struct {
 
 extern const struct AllocatorVTable ArenaAllocator_VTABLE;
 
-ArenaAllocator ArenaAllocator_mk(void *block, size_t size);
+ArenaAllocator ArenaAllocator_FromBlock(void *block, size_t size);
 
-ArenaAllocator ArenaAllocator_mkChild(Allocator *allocator, size_t size, bool *failed);
+ArenaAllocator ArenaAllocator_Alloc(Allocator *allocator, size_t size, bool *failed);
 
 void ArenaAllocator_freeBlock(ArenaAllocator *allocator);
 
